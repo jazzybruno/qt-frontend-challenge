@@ -2,11 +2,12 @@ import { useAuth } from "@/contexts/AuthProvider";
 import { Button , Group , Avatar , Text, ActionIcon, Modal, InputWrapper, Input } from "@mantine/core";
 import { LogOutIcon } from "lucide-react";
 import { useState } from "react";
-import AccountIndex from "../account";
-import { humanizeDate, humanizeDateFormat } from "@/utils/funcs";
+import {humanizeDateFormat } from "@/utils/funcs";
+import CreatePost from "./create-post";
 
 const Header = () => {
   const [profileModel , setProfileModal] = useState(false)
+  const [createPostModel , setCreatePostModel] = useState(false)
 
   const logout = () => {
     sessionStorage.removeItem("token");
@@ -16,7 +17,7 @@ const Header = () => {
 
     const { user } = useAuth();
     return ( 
-        <div className="bg-white h-20 flex w-[100%] flex-row justify-between px-10 items-center">
+        <div className="bg-white  h-20 flex w-[100%] flex-row justify-between px-10 items-center">
             <div
             className={
               "flex gap-3 font-montserrat items-center text-2xl justify-center "
@@ -29,7 +30,9 @@ const Header = () => {
           {
             user?.id != null ? (
                 <div className="flex space-x-10 flex-row justify-around">
-                <Button>Create Post </Button>
+                <Button onClick={()=>{
+                  setCreatePostModel(true)
+                }}>Create Post </Button>
                 <Button>My Posts</Button>
                 <Button>My Reports</Button>
             </div>
@@ -107,18 +110,32 @@ const Header = () => {
               <Input value={user?.fullName} disabled type={"text"} />
             </InputWrapper> 
             <InputWrapper label="Date Of Birth" description="Date Of Birth">
-              <Input value={humanizeDateFormat(user?.dateOfBirth || "Something")} disabled type={"text"} />
+              <Input value={humanizeDateFormat(user?.dateOfBirth || "Something") || ""} disabled type={"text"} />
             </InputWrapper> 
           </div>
         </div>
       </div>
             </Modal>
 
-          <Modal>
+          <Modal
+            opened={createPostModel}
+            size={'lg'}
+            title={
+              <div
+              className={
+                "flex gap-3 font-montserrat items-center text-2xl justify-center "
+              }
+            >
+              <img src={"/Logo.png"} width={40} height={40} alt="Logo" />
+              QT MEDIA
+            </div>
+            }
+            onClose={()=>{
+              setCreatePostModel(false)
+            }}
+          >
             {/* The create post model  */}
-            <form action="">
-              
-            </form>
+            <CreatePost />
           </Modal>
             </div>
 

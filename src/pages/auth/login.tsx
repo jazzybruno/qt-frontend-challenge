@@ -37,7 +37,7 @@ export default function Login() {
         const role : IRole[] = user.roles.filter(role => {
             return role.name == "ADMIN"
         })
-        let nextUrl ="/";
+        let nextUrl : string;
         if(role.length == 0){
            nextUrl='/'
         }else{

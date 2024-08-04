@@ -36,7 +36,7 @@ function App() {
       const role : IRole[] = user.roles.filter(role => {
         return role.name == "ADMIN"
     })
-    if(length == 0){
+    if(role.length == 0){
       return <Navigate to="/" />;
     }else{
       return <Outlet />;

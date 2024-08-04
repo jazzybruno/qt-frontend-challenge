@@ -4,29 +4,22 @@ import { useState } from 'react';
 import { Post } from '@/types/post.type';
 import { useAuth } from '@/contexts/AuthProvider';
 import { notifications } from '@mantine/notifications';
-import { AuthAPi } from '@/utils/fetcher';
+import { AuthAPi, getResError } from '@/utils/fetcher';
 import { Comment } from '@/types/comment.type';
 import useGet from '@/hooks/useGet';
+import { humanizeDate } from '@/utils/funcs';
 
 type Props =  {
     post : Post
 }
 
-const comments = [
-    { username: 'Alice', text: 'Great post! Really enjoyed reading about your adventure.' },
-    { username: 'Bob', text: 'Beautiful scenery! Thanks for sharing.' },
-    { username: 'Bob', text: 'Beautiful scenery! Thanks for sharing.' },
-    { username: 'Bob', text: 'Beautiful scenery! Thanks for sharing.' },
-    { username: 'Bob', text: 'Beautiful scenery! Thanks for sharing.' },
-    { username: 'Bob', text: 'Beautiful scenery! Thanks for sharing.' },
-    { username: 'Bob', text: 'Beautiful scenery! Thanks for sharing.' },
-    // Add more comments here
-  ];
 
 function PostCard(props : Props) {
 
     const {user} = useAuth()
     const [modalOpened, setModalOpened] = useState(false);
+    const [commentsNumber , setCommentNumber] = useState(props.post.numberOfComments);
+    const [likesNumber , setLikesNumber] = useState(props.post.numberOfLikes);
     const [commentModalOpened , setCommentModalOpened] = useState(false)
     const [reportModalOpened , setReportModalOpened] = useState(false)
     const [comments , setComments] = useState<Comment[]>([]);
@@ -50,7 +43,8 @@ function PostCard(props : Props) {
         defaultData: [],
       }
     );
-    const visibleComments = expanded ? comments : comments.slice(0, 3);
+
+    const visibleComments = expanded ? comment : comment?.slice(0, 3);
 
   const handleLike = (post : Post) => {
     if(user?.id == null || user?.id == undefined){
@@ -68,11 +62,11 @@ function PostCard(props : Props) {
           message : "Successfully Liked Post",
           color: 'green'
          })
-         window.location.href='/';
+         setLikesNumber(likesNumber+1);
      })
      .catch((err)=>{
       notifications.show({
-        message : "Failed to Like Post",
+        message : getResError(err) || "Failed to Like Post",
         color: 'red'
        })
      })   
@@ -96,7 +90,8 @@ function PostCard(props : Props) {
          message : "Successfully Commented on Post",
          color: 'green'
         })
-        window.location.href='/';
+        data.comment = '';
+        setCommentNumber(commentsNumber + 1)
     })
     .catch((err)=>{
       handleCommentCloseModal();
@@ -192,22 +187,12 @@ notifications.show({
 
   return (
     <Card shadow="sm" padding="lg" radius="md" withBorder>
-   
-        {
-            props.post.imagePath != null ? (
-                <Card.Section>
-                <Image
-          src={props.post.imagePath}
-          height={160}
-          alt="Norway"
-        />
-        </Card.Section>
-            ) : "" 
-        }
 
       <Group justify="space-between" mt="md" mb="xs">
         <Text fw={500}>{props.post.title}</Text>
-        <Badge color="pink">NEW POST</Badge>
+        <Badge color="pink">{
+            humanizeDate(props.post.createdAt)
+          }</Badge>
       </Group>
 
       <Text size="sm" c="dimmed">
@@ -226,7 +211,7 @@ notifications.show({
 
       <Group mt="md">
         <div className='flex space-x-2 text-gray-600 justify-center items-center font-bold text-xl'>
-          <h1>{props.post.numberOfLikes}</h1>
+          <h1>{likesNumber}</h1>
         <ActionIcon onClick={()=>{
           handleLike(props.post)
         }}>
@@ -235,7 +220,7 @@ notifications.show({
         </div>
 
         <div className='flex space-x-2 text-gray-600 justify-center items-center font-bold text-xl'>
-          <h1>{props.post.numberOfComments}</h1>
+          <h1>{commentsNumber}</h1>
           <ActionIcon onClick={()=>{
             handleCommentOpenModal()
           }}>
@@ -257,24 +242,20 @@ notifications.show({
         title="Post Details"
         size="xl"
       >
-        <Group justify="left" mb="md">
+        <Group justify="space-between" mt="md" mb="xs">
+        <Group>
         <Avatar
           size={"md"}
           src={`https://ui-avatars.com/api/?name=John&bold=true`}
         />
                 <h2 className='text-md'>John Doe</h2>
         </Group>
-        {
-            props.post.imagePath != null ? (
-                <div className='my-5'>
-                    <Image
-                src={props.post.imagePath}
-                height={160}
-                alt="Norway"
-              />
-                </div>
-            ) : "" 
-        }
+
+        <Badge color="pink">{
+            humanizeDate(props.post.createdAt)
+          }</Badge>
+        </Group>
+        
          <h1 className='text-black font-bold text-2xl'>
           {props.post.title}
           </h1>
@@ -285,7 +266,7 @@ notifications.show({
 {/* // comments section  */}
 <div className="mt-4 ">
       <h2 className="text-lg font-semibold text-gray-800 mb-3">Comments</h2>
-      {visibleComments.map((comment, index) => (
+      {visibleComments?.map((comment, index) => (
         <div key={index} className="flex flex-col space-y-2 mb-4 ">
           <div className="flex flex-col items-start p-3 space-x-2 border border-gray-200 rounded-lg bg-gray-50">
             <p className="text-sm font-semibold text-gray-800">{comment.author.fullName}</p>
@@ -293,12 +274,14 @@ notifications.show({
           </div>
         </div>
       ))}
-      <button
+      {visibleComments?.length == 0 ? "No Comments Available" : (
+        <button
         onClick={() => setExpanded(!expanded)}
         className="mt-2 text-blue-500 hover:underline"
       >
         {expanded ? 'Show less' : `Show ${comments.length - 3} more`}
       </button>
+      )}
     </div>
 
       </Modal>
