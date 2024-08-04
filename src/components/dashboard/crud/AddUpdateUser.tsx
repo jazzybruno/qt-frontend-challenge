@@ -16,8 +16,10 @@ interface Props {
 const AddUpdateUser: FC<Props> = ({ refetch, onClose, isEdit, user }) => {
   const [data, setData] = React.useState({
     email: user?.email ?? "",
-    name: user?.name ?? "",
-    password: user?.password ?? "",
+    userName: user?.username ?? "",
+    firstName: user?.firstName ?? "",
+    lastName: user?.lastName ?? "",
+    phoneNumber: user?.telephone ?? ""
   });
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<any>(null);
@@ -25,17 +27,17 @@ const AddUpdateUser: FC<Props> = ({ refetch, onClose, isEdit, user }) => {
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
-    if (data.email.trim() === "" || data.name.trim() === "" || data.password.trim() === "") {
+    if (data.email.trim() === "" || data.userName.trim() === "" || data.firstName.trim() === "" || data.lastName.trim() === "" || data.phoneNumber.trim() === "" ) {
       setError("Please fill all required fields");
       return;
     }
     try {
-      const res = await AuthAPi.post("/users/create", data);
+      const res = await AuthAPi.patch(`/users/update-user/${user?.id}`, data);
       console.log(res);
       if (res.data) {
         notifications.show({
-          title: "Add User Success",
-          message: "Add User Success",
+          title: "Update User Success",
+          message: "Update User Success",
           color: "green",
         });
       }
@@ -44,7 +46,7 @@ const AddUpdateUser: FC<Props> = ({ refetch, onClose, isEdit, user }) => {
     } catch (error) {
       console.log(error);
       notifications.show({
-        title: "Add User Failed",
+        title: "Updated User Failed",
         message: getResError(error),
         color: "red",
       });
@@ -57,27 +59,57 @@ const AddUpdateUser: FC<Props> = ({ refetch, onClose, isEdit, user }) => {
       onSubmit={onSubmit}
       className=" w-full flex-col flex gap-y-4 py-4 items-center"
     >
-      {/* <input type="file" id="photo" hidden />
-      <label
-        htmlFor="photo"
-        className=" cursor-pointer w-32 aspect-square bg-foreground rounded-full flex justify-center items-center"
-      >
-        <BsFillCameraFill size={25} />
-      </label> */}
       {error && (
         <div className="text-red-500 text-sm font-semibold">{error}</div>
       )}
       <div className="flex mt-5 w-full flex-col gap-y-4">
+      <Input.Wrapper w={"100%"} label="FirstName" description="FirstName">
+          <Input
+            type="text"
+            required
+            placeholder="FirstName"
+            onChange={(e) => setData({ ...data, firstName: e.target.value })}
+            value={data.firstName}
+            p={2}
+            variant="filled"
+            size="md"
+          />
+        </Input.Wrapper>
+
+        <Input.Wrapper w={"100%"} label="Last Name" description="Last Name">
+          <Input
+            type="text"
+            required
+            placeholder="LastName"
+            onChange={(e) => setData({ ...data, lastName: e.target.value })}
+            value={data.lastName}
+            p={2}
+            variant="filled"
+            size="md"
+          />
+        </Input.Wrapper>
         <Input.Wrapper
           w={"100%"}
           label="Username"
           description="Username for the user"
         >
           <Input
-            onChange={(e) => setData({ ...data, name: e.target.value })}
+            onChange={(e) => setData({ ...data, userName: e.target.value })}
             required
-            value={data.name}
+            value={data.userName}
             placeholder="Username"
+            p={2}
+            variant="filled"
+            size="md"
+          />
+        </Input.Wrapper>
+        <Input.Wrapper w={"100%"} label="Your Telephone" description="Telephone">
+          <Input
+            type="text"
+            required
+            placeholder="Telephone"
+            onChange={(e) => setData({ ...data, phoneNumber: e.target.value })}
+            value={data.phoneNumber}
             p={2}
             variant="filled"
             size="md"
@@ -95,18 +127,7 @@ const AddUpdateUser: FC<Props> = ({ refetch, onClose, isEdit, user }) => {
             size="md"
           />
         </Input.Wrapper>
-        <Input.Wrapper w={"100%"} label="Department" description="Department">
-        <Input
-            type="password"
-            required
-            placeholder="Password"
-            onChange={(e) => setData({ ...data, password: e.target.value })}
-            value={data.password}
-            p={2}
-            variant="filled"
-            size="md"
-          />
-        </Input.Wrapper>
+
       </div>
       <Button
         type="submit"
@@ -118,7 +139,7 @@ const AddUpdateUser: FC<Props> = ({ refetch, onClose, isEdit, user }) => {
         mt={8}
         className=" w-full bg-primary text-white"
       >
-        {isEdit ? "Update User" : "Add User"}
+        Update User
       </Button>
     </form>
   );

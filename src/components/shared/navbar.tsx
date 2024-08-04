@@ -36,7 +36,7 @@ const NavBar: FC<Props> = ({ right }) => {
           {title} | Dashboard
         </title>
       </Helmet>
-      <div className=" sticky h-[80px] bg-white  top-0 bg-accent z-10 w-full items-center flex p-5 pl-8 justify-between">
+      <div className=" sticky h-[60px] bg-white  top-0 bg-accent z-10 w-full items-center flex p-5 pl-8 justify-between">
         <h1
           title={title}
           className=" capitalize font-semibold text-xl truncate"

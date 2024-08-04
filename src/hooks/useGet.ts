@@ -37,9 +37,7 @@ export default function useGet<T = any>(url: string, options?: Opts) {
     console.log("useGet url", url);
     try {
       const response = await AuthAPi.get<ApiResponse<T>>(url);
-      console.log("useGet response", response.data);
       setData(response.data?.payload);
-      console.log("useGet data", JSON.parse(JSON.stringify(response.data)));
     } catch (error: any) {
       const err = getResError(error);
       console.log("useGet error", err);

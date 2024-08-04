@@ -29,7 +29,7 @@ const Users = () => {
     status: false,
     data: null as IUser | null,
   });
-  const { deleteData, loading: deleteLoading } = useDelete("/users/all");
+  const { deleteData, loading: deleteLoading } = useDelete(`/users/delete-user`);
   const { user } = useAuth();
 
   const {
@@ -62,12 +62,28 @@ const Users = () => {
 
   const columns: Column<IUser>[] = [
     {
+      name: "First Name",
+      accessorKey: "firstName",
+    },
+    {
+      name: "Last Name",
+      accessorKey: "lastName",
+    },
+    {
+      name: "Telephone",
+      accessorKey: "telephone",
+    },
+    {
       name: "Username",
-      accessorKey: "name",
+      accessorKey: "username",
     },
     {
       name: "Email",
       accessorKey: "email",
+    },
+    {
+      name: "Date Of Birth",
+      accessorKey: "dateOfBirth",
     },
     {
       name: "Actions",
@@ -109,16 +125,6 @@ const Users = () => {
 
   return (
     <DashboardLayout
-      right={
-          <Button
-            size="md"
-            onClick={() => setShowDrawer(true)}
-            radius={"md"}
-            className=" duration-300"
-          >
-            + Add User
-          </Button>
-      }
     >
       <div className="flex w-full flex-col p-3">
         {loading && <TableSkeleton columns={columns} />}
@@ -143,7 +149,7 @@ const Users = () => {
         )}
         {!loading && !error && filteredUsers && (
           <DataTable
-            searchKey="name"
+            searchKey="email"
             columns={columns}
             data={
                  filteredUsers
@@ -192,7 +198,7 @@ const Users = () => {
       <MainModal
         size={"lg"}
         isOpen={isDelete.status}
-        title="Delete Course"
+        title="Delete User"
         onClose={() => setIsDelete({ status: false, data: null })}
       >
         <DeleteForm
