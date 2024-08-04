@@ -58,6 +58,7 @@ function PostCard(props : Props) {
         message : "Login to like posts",
         color : "red"
       })
+      
   } else{
      AuthAPi.post('/like/create' , {
       postId : post.id
@@ -67,6 +68,7 @@ function PostCard(props : Props) {
           message : "Successfully Liked Post",
           color: 'green'
          })
+         window.location.href='/';
      })
      .catch((err)=>{
       notifications.show({
@@ -89,12 +91,15 @@ function PostCard(props : Props) {
         postId : props.post.id
       })
       .then((res)=>{
+        handleCommentCloseModal();
         notifications.show({
          message : "Successfully Commented on Post",
          color: 'green'
         })
+        window.location.href='/';
     })
     .catch((err)=>{
+      handleCommentCloseModal();
      notifications.show({
        message : "Failed to comment on Post",
        color: 'red'
@@ -103,6 +108,31 @@ function PostCard(props : Props) {
   }
 
   const handleReport = () => {
+    if(reportData.description.trim() == " " || reportData.title.trim() == " "){
+      notifications.show({
+       message : "Please enter a valid report",
+       color: "red"
+      })
+ }
+ AuthAPi.post('/abusive-content/create/post' , {
+   title : reportData.title,
+   description : reportData.description,
+   postId : props.post.id
+ })
+ .then((res)=>{
+   handleReportCloseModal();
+   notifications.show({
+    message : "Successfully Reported  Post",
+    color: 'green'
+   })
+})
+.catch((err)=>{
+  handleReportCloseModal();
+notifications.show({
+  message : "Failed to Reported  Post",
+  color: 'red'
+ })
+})
   }
 
   const handleReportOpenModal = () => {
@@ -298,7 +328,7 @@ function PostCard(props : Props) {
           <Button color='red' onClick={()=>{
             handleCommentCloseModal()
           }}>Cancel</Button>
-          <Button color='blue' >Submit</Button>
+          <Button color='blue' onClick={handleComment}>Submit</Button>
           </div>
           </form>
         </div>
@@ -343,7 +373,7 @@ function PostCard(props : Props) {
           <Button color='red' onClick={()=>{
             handleReportCloseModal()
           }}>Cancel</Button>
-          <Button color='blue' >Submit</Button>
+          <Button color='blue' onClick={handleReport}>Submit</Button>
           </div>
           </form>
         </div>

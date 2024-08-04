@@ -1,5 +1,8 @@
 import { IUser } from "./user.type";
 
+export interface IRole extends IModel {
+  name : string
+}
 export interface IModel {
   id: string;
   createdAt: Date | string;

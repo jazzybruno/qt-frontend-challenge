@@ -5,6 +5,8 @@ import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import { api, getResError } from "@/utils/fetcher";
 import { notifications } from "@mantine/notifications";
+import { IUser } from "@/types/user.type";
+import { IRole } from "@/types/base.type";
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [data, setData] = useState({
@@ -29,10 +31,18 @@ export default function Login() {
         autoClose: 3000,
       });
       if (res.data) {
-        const user = res.data.payload?.user;
+        const user : IUser = res.data.payload?.user;
         sessionStorage.setItem("token", res.data.payload.tokens?.accessToken);
         sessionStorage.setItem("user", JSON.stringify(user));
-        const nextUrl ="/";
+        const role : IRole[] = user.roles.filter(role => {
+            return role.name == "ADMIN"
+        })
+        let nextUrl ="/";
+        if(role.length == 0){
+           nextUrl='/'
+        }else{
+            nextUrl = '/account'
+        }
         window.location.href = nextUrl;
       }
     } catch (error) {

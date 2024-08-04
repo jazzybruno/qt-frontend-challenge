@@ -114,6 +114,12 @@ const Header = () => {
       </div>
             </Modal>
 
+          <Modal>
+            {/* The create post model  */}
+            <form action="">
+              
+            </form>
+          </Modal>
             </div>
 
      );

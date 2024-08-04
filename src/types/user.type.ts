@@ -1,4 +1,4 @@
-import { IModel } from "./base.type";
+import { IModel, IRole } from "./base.type";
 
 export interface IUser extends IModel {
     firstName:       string;
@@ -9,5 +9,6 @@ export interface IUser extends IModel {
     username:       string;
     password:    string;
     email:          string;
+    roles :           IRole[]
 }
 
