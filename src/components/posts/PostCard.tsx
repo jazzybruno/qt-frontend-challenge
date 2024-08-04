@@ -4,9 +4,12 @@ import { useState } from 'react';
 import { Post } from '@/types/post.type';
 import { useAuth } from '@/contexts/AuthProvider';
 import { notifications } from '@mantine/notifications';
+import { AuthAPi } from '@/utils/fetcher';
+import { Comment } from '@/types/comment.type';
+import useGet from '@/hooks/useGet';
 
 type Props =  {
-    showImage : string
+    post : Post
 }
 
 const comments = [
@@ -26,8 +29,8 @@ function PostCard(props : Props) {
     const [modalOpened, setModalOpened] = useState(false);
     const [commentModalOpened , setCommentModalOpened] = useState(false)
     const [reportModalOpened , setReportModalOpened] = useState(false)
+    const [comments , setComments] = useState<Comment[]>([]);
     const [expanded, setExpanded] = useState(false);
-    const visibleComments = expanded ? comments : comments.slice(0, 3);
     const [data , setData] = useState({
       comment : ''
     })
@@ -36,20 +39,67 @@ function PostCard(props : Props) {
       description : ''
     })
 
-  const handleLike = () => {
+    const {
+      data: comment,
+      loading,
+      error,
+      get,
+    } = useGet<Comment[]>(
+      `/comment/post/${props.post.id}`,
+      {
+        defaultData: [],
+      }
+    );
+    const visibleComments = expanded ? comments : comments.slice(0, 3);
+
+  const handleLike = (post : Post) => {
     if(user?.id == null || user?.id == undefined){
       notifications.show({
         message : "Login to like posts",
         color : "red"
       })
   } else{
-     console.log("Post liked");     
+     AuthAPi.post('/like/create' , {
+      postId : post.id
+     })
+     .then((res)=>{
+         notifications.show({
+          message : "Successfully Liked Post",
+          color: 'green'
+         })
+     })
+     .catch((err)=>{
+      notifications.show({
+        message : "Failed to Like Post",
+        color: 'red'
+       })
+     })   
   }
 }
   
-  const handleComment = (post : Post) => {
-      handleOpenModal()
-      console.log(post)
+  const handleComment = () => {
+      if(data.comment.trim() == " "){
+           notifications.show({
+            message : "Please enter a valid comment",
+            color: "red"
+           })
+      }
+      AuthAPi.post('/comment/create' , {
+        comment : data.comment,
+        postId : props.post.id
+      })
+      .then((res)=>{
+        notifications.show({
+         message : "Successfully Commented on Post",
+         color: 'green'
+        })
+    })
+    .catch((err)=>{
+     notifications.show({
+       message : "Failed to comment on Post",
+       color: 'red'
+      })
+    })
   }
 
   const handleReport = () => {
@@ -114,10 +164,10 @@ function PostCard(props : Props) {
     <Card shadow="sm" padding="lg" radius="md" withBorder>
    
         {
-            props.showImage == 'show' ? (
+            props.post.imagePath != null ? (
                 <Card.Section>
                 <Image
-          src="https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-8.png"
+          src={props.post.imagePath}
           height={160}
           alt="Norway"
         />
@@ -126,13 +176,12 @@ function PostCard(props : Props) {
         }
 
       <Group justify="space-between" mt="md" mb="xs">
-        <Text fw={500}>Norway Fjord Adventures</Text>
+        <Text fw={500}>{props.post.title}</Text>
         <Badge color="pink">NEW POST</Badge>
       </Group>
 
       <Text size="sm" c="dimmed">
-        With Fjord Tours you can explore more of the magical fjord landscapes with tours and
-        activities on and around the fjords of Norway
+        {props.post.content}
       </Text>
 
       <Button color="blue" fullWidth mt="md" radius="md" onClick={handleOpenModal}>
@@ -142,26 +191,29 @@ function PostCard(props : Props) {
       <Group justify="space-between">
       <Group mt="md" mb="xs" align="center">
         <Avatar src="https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/avatar.png" radius="xl" size="md" />
-        <Text size="sm" color="dimmed">John Doe</Text>
+        <Text size="sm" color="dimmed">{props.post.author.fullName}</Text>
       </Group>
 
       <Group mt="md">
         <div className='flex space-x-2 text-gray-600 justify-center items-center font-bold text-xl'>
-          <h1>12</h1>
-        <ActionIcon onClick={handleLike}>
+          <h1>{props.post.numberOfLikes}</h1>
+        <ActionIcon onClick={()=>{
+          handleLike(props.post)
+        }}>
           <AiOutlineLike />
         </ActionIcon>
         </div>
 
         <div className='flex space-x-2 text-gray-600 justify-center items-center font-bold text-xl'>
-          <h1>12</h1>
-          <ActionIcon onClick={handleCommentOpenModal}>
+          <h1>{props.post.numberOfComments}</h1>
+          <ActionIcon onClick={()=>{
+            handleCommentOpenModal()
+          }}>
           <AiOutlineComment />
         </ActionIcon>
         </div>
 
         <div className='flex space-x-2 text-gray-600 justify-center items-center font-bold text-xl'>
-          <h1>12</h1>
           <ActionIcon onClick={handleReportOpenModal}>
           <AiOutlineFlag />
         </ActionIcon>
@@ -183,10 +235,10 @@ function PostCard(props : Props) {
                 <h2 className='text-md'>John Doe</h2>
         </Group>
         {
-            props.showImage == 'show' ? (
+            props.post.imagePath != null ? (
                 <div className='my-5'>
                     <Image
-                src="https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-8.png"
+                src={props.post.imagePath}
                 height={160}
                 alt="Norway"
               />
@@ -194,14 +246,10 @@ function PostCard(props : Props) {
             ) : "" 
         }
          <h1 className='text-black font-bold text-2xl'>
-          Norway Fjord Adventures
+          {props.post.title}
           </h1>
         <Text size="sm" color="dimmed" mt="md">
-          With Fjord Tours you can explore more of the magical fjord landscapes with tours and
-          activities on and around the fjords of Norway. With Fjord Tours you can explore more of
-          the magical fjord landscapes with tours and activities on and around the fjords of
-          Norway. With Fjord Tours you can explore more of the magical fjord landscapes with tours
-          and activities on and around the fjords of Norway.
+          {props.post.content}
         </Text>
 
 {/* // comments section  */}
@@ -210,8 +258,8 @@ function PostCard(props : Props) {
       {visibleComments.map((comment, index) => (
         <div key={index} className="flex flex-col space-y-2 mb-4 ">
           <div className="flex flex-col items-start p-3 space-x-2 border border-gray-200 rounded-lg bg-gray-50">
-            <p className="text-sm font-semibold text-gray-800">{comment.username}</p>
-            <p className="text-sm text-gray-600">{comment.text}</p>
+            <p className="text-sm font-semibold text-gray-800">{comment.author.fullName}</p>
+            <p className="text-sm text-gray-600">{comment.comment}</p>
           </div>
         </div>
       ))}
@@ -233,7 +281,7 @@ function PostCard(props : Props) {
         title="Comment Details"
         size="md" >
         <div>
-          <form className='flex flex-col space-y-3'>
+          <form onSubmit={handleComment} className='flex flex-col space-y-3'>
           <Input.Wrapper w={"100%"} label="Comment" description="Comment on post">
           <Input
             type="text"
