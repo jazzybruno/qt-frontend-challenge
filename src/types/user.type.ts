@@ -5,7 +5,7 @@ export interface IUser extends IModel {
     lastName:       string;
     telephone:       string;
     fullName:       string;
-    dateOfBirth:       string;
+    dateOfBirth:       string | null;
     username:       string;
     password:    string;
     email:          string;

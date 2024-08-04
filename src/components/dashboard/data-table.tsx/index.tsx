@@ -1,4 +1,5 @@
 "use client";
+import { humanizeDateFormat } from "@/utils/funcs";
 import { Table, Checkbox, Pagination, useMantineTheme, Input } from "@mantine/core";
 import * as React from "react";
 import { FaEye, FaRegEdit, FaRegTrashAlt } from "react-icons/fa";

@@ -16,7 +16,7 @@ import React, { useState } from "react";
 import { AiOutlineEye, AiOutlineReload } from "react-icons/ai";
 import { BiEdit, BiTrash } from "react-icons/bi";
 
-const Users = () => {
+const AbusiveReport = () => {
   const [showDrawer, setShowDrawer] = React.useState(false);
   const [viewUser, setViewUser] = React.useState({
     open: false,
@@ -213,4 +213,4 @@ const Users = () => {
   );
 };
 
-export default Users;
+export default AbusiveReport;

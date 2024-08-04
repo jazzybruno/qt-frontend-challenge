@@ -18,7 +18,7 @@ export default function UploadArea(props: Partial<DropzoneProps> & Props) {
       <Dropzone.Idle>
         <div className="flex items-center justify-center gap-x-2 p-2 bg-white">
           <AiOutlineCloudUpload size={25} />
-          Upload Document
+          Upload Image
         </div>
       </Dropzone.Idle>
       <Dropzone.Reject>

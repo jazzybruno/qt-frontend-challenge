@@ -17,7 +17,10 @@ export const humanizeDate = (date: string | Date) => {
   return moment(date).fromNow();
 };
 
-export const humanizeDateFormat = (date: string | Date) => {
+export const humanizeDateFormat = (date: string | Date | undefined | null) => {
+  if(date == undefined){
+    return null;
+  }
   return moment(date).format("MMM Do YY")
 };
 

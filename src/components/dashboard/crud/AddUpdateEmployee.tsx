@@ -1,5 +1,5 @@
 import AsyncSelect from "@/components/core/AsyncSelect";
-import { EmployeeLaptop } from "@/types/employee-laptop.type";
+import { EmployeeLaptop } from "@/types/post.type";
 import { IUser } from "@/types/user.type";
 import { AuthAPi, getResError } from "@/utils/fetcher";
 import { Button, Input, Select } from "@mantine/core";

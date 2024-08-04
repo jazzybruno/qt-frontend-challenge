@@ -1,4 +1,4 @@
-import { EmployeeLaptop } from "@/types/employee-laptop.type";
+import { EmployeeLaptop } from "@/types/post.type";
 import { IUser } from "@/types/user.type";
 import { Avatar, Divider } from "@mantine/core";
 import { FC } from "react";

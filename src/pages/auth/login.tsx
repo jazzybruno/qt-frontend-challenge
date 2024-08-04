@@ -32,7 +32,7 @@ export default function Login() {
         const user = res.data.payload?.user;
         sessionStorage.setItem("token", res.data.payload.tokens?.accessToken);
         sessionStorage.setItem("user", JSON.stringify(user));
-        const nextUrl ="/account";
+        const nextUrl ="/";
         window.location.href = nextUrl;
       }
     } catch (error) {

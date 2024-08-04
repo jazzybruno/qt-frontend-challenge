@@ -1,5 +1,5 @@
-import { MenuSquareIcon, Nut, UserCircleIcon } from "lucide-react";
-import {FaUsers } from "react-icons/fa";
+import { MenuSquareIcon, UserCircleIcon } from "lucide-react";
+import {FaUsers , FaRegFilePowerpoint , FaInstagram } from "react-icons/fa";
 import { MdDashboard } from "react-icons/md";
 
 interface Route {
@@ -11,19 +11,25 @@ interface Route {
 
 export const UserRoutes: Route[] = [
   {
-    icon: <MdDashboard size={20} />,
-    name: "DashBoard",
-    path: "/dashboard",
-  },
-  {
     icon: <FaUsers size={20} />,
     name: "Users",
     path: "/users",
   },
   {
+    icon: <FaInstagram className="w-5" />,
+    name: "Posts",
+    path: "/posts",
+    isPublic: true
+  },
+  {
     icon: <MenuSquareIcon className="w-5" />,
-    name: "Employee",
-    path: "/employee",
+    name: "Comments",
+    path: "/comments",
+  },
+  {
+    icon: <FaRegFilePowerpoint className="w-5" />,
+    name: "Abuse Reports",
+    path: "/report",
   },
   {
     icon: <UserCircleIcon size={20} />,
