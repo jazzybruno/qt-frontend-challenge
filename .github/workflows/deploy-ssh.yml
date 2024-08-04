@@ -1,0 +1,32 @@
+name: Deploy to SSH Server
+
+on:
+  push:
+    branches:
+      - master # Change this to your main branch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Deploy to SSH server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          port: ${{ secrets.SSH_PORT }}
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          # fingerprint: ${{ secrets.SSH_FINGERPRINT }}
+          script: |
+            cd ~/apps/centrika-doc-review-fontend
+            git pull origin master
+            export NVM_DIR=~/.nvm
+            source ~/.nvm/nvm.sh
+            npm i -g yarn
+            yarn install
+            yarn run build
+            pm2 restart doc-review
