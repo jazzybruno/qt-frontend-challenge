@@ -1,6 +1,7 @@
+import { HandThumbUpIcon, FlagIcon } from  "@heroicons/react/24/outline"
 import { Card , Avatar , Modal , Image, Text, Badge, Button, Group, ActionIcon, Input, ButtonGroup, Alert } from '@mantine/core';
 import { AiOutlineLike, AiOutlineComment, AiOutlineFlag } from 'react-icons/ai';
-import { useState } from 'react';
+import { useState , useEffect } from 'react';
 import { Post } from '@/types/post.type';
 import { useAuth } from '@/contexts/AuthProvider';
 import { notifications } from '@mantine/notifications';
@@ -8,6 +9,8 @@ import { AuthAPi, getResError } from '@/utils/fetcher';
 import { Comment } from '@/types/comment.type';
 import useGet from '@/hooks/useGet';
 import { humanizeDate } from '@/utils/funcs';
+import useDelete from "@/hooks/useDelete";
+import { Like } from "@/types/like.type";
 
 type Props =  {
     post : Post
@@ -24,6 +27,8 @@ function PostCard(props : Props) {
     const [reportModalOpened , setReportModalOpened] = useState(false)
     const [comments , setComments] = useState<Comment[]>([]);
     const [expanded, setExpanded] = useState(false);
+    const [isLiked,setIsLiked] = useState(false)
+    const [likeDetails , setLikeDetails] = useState<Like>()
     const [data , setData] = useState({
       comment : ''
     })
@@ -44,6 +49,16 @@ function PostCard(props : Props) {
       }
     );
 
+    useEffect(() => {
+      if (user) {
+        const isLiked = props.post.likes.some(like => like.author.id === user.id);
+        setIsLiked(isLiked);
+        setLikeDetails(props.post.likes.filter((like : Like)=> {
+          return like.author.id === user.id
+        } )[0])
+      }
+    }, [props.post.likes, user]);
+
     const visibleComments = expanded ? comment : comment?.slice(0, 3);
 
   const handleLike = (post : Post) => {
@@ -54,6 +69,23 @@ function PostCard(props : Props) {
       })
       
   } else{
+    if(isLiked){
+      AuthAPi.delete(`/like/delete/${likeDetails?.id}`)
+       .then((res)=>{
+           notifications.show({
+            message : "Successfully unliked Post",
+            color: 'green'
+           })
+           setIsLiked(false)
+           setLikesNumber(likesNumber-1);
+       })
+       .catch((err)=>{
+        notifications.show({
+          message : getResError(err) || "Failed to Unlike Post",
+          color: 'red'
+         })
+       })  
+    }else{
      AuthAPi.post('/like/create' , {
       postId : post.id
      })
@@ -62,6 +94,7 @@ function PostCard(props : Props) {
           message : "Successfully Liked Post",
           color: 'green'
          })
+         setIsLiked(true)
          setLikesNumber(likesNumber+1);
      })
      .catch((err)=>{
@@ -69,7 +102,8 @@ function PostCard(props : Props) {
         message : getResError(err) || "Failed to Like Post",
         color: 'red'
        })
-     })   
+     })  
+    } 
   }
 }
   
@@ -186,11 +220,11 @@ notifications.show({
  
 
   return (
-    <Card shadow="sm" padding="lg" radius="md" withBorder>
+    <Card shadow="none" padding="lg" radius="md">
 
       <Group justify="space-between" mt="md" mb="xs">
         <Text fw={500}>{props.post.title}</Text>
-        <Badge color="pink">{
+        <Badge color="blue">{
             humanizeDate(props.post.createdAt)
           }</Badge>
       </Group>
@@ -198,10 +232,10 @@ notifications.show({
       <Text size="sm" c="dimmed">
         {props.post.content}
       </Text>
-
-      <Button color="blue" fullWidth mt="md" radius="md" onClick={handleOpenModal}>
-        Read More
-      </Button>
+ 
+      <button className='text-sm text-blue-600 py-4 font-medium w-fit'  onClick={handleOpenModal}>
+        Read more
+      </button>
 
       <Group justify="space-between">
       <Group mt="md" mb="xs" align="center">
@@ -212,26 +246,25 @@ notifications.show({
       <Group mt="md">
         <div className='flex space-x-2 text-gray-600 justify-center items-center font-bold text-xl'>
           <h1>{likesNumber}</h1>
-        <ActionIcon onClick={()=>{
+        <button onClick={()=>{
           handleLike(props.post)
         }}>
-          <AiOutlineLike />
-        </ActionIcon>
+          <HandThumbUpIcon className={`w-6 h-6 border-slate-500 ${isLiked ? 'fill-blue-500 stroke-blue-500 ' : 'fill-white'} `}/>
+        </button> 
         </div>
 
         <div className='flex space-x-2 text-gray-600 justify-center items-center font-bold text-xl'>
           <h1>{commentsNumber}</h1>
-          <ActionIcon onClick={()=>{
+          <button onClick={()=>{
             handleCommentOpenModal()
           }}>
           <AiOutlineComment />
-        </ActionIcon>
+        </button>
         </div>
-
         <div className='flex space-x-2 text-gray-600 justify-center items-center font-bold text-xl'>
-          <ActionIcon onClick={handleReportOpenModal}>
-          <AiOutlineFlag />
-        </ActionIcon>
+          <button onClick={handleReportOpenModal}>
+          <FlagIcon className="w-6 h-6 border-slate-500" />
+        </button>
         </div>
       </Group>
       </Group>

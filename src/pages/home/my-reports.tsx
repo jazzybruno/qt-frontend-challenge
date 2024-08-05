@@ -114,6 +114,7 @@ const MyReports = (props : props) => {
           </div>
         )}
         {!loading && !error && filteredreport && (
+          <div className="bg-white">
           <DataTable
             searchKey="title"
             columns={columns}
@@ -122,6 +123,8 @@ const MyReports = (props : props) => {
             }
             tableClass="flex flex-col justify-center"
           />
+            </div>
+
         )}
       </div>
       <MainModal

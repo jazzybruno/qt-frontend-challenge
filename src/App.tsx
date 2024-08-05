@@ -15,7 +15,7 @@ import AbusiveReport from "./pages/admin/abuse-report";
 import Home from "./pages/home";
 import { IUser } from "./types/user.type";
 import { IRole } from "./types/base.type";
-
+import './App.css'
 function App() {
   const { user } = useAuth();
 

@@ -138,6 +138,7 @@ const MyPosts = (props : props) => {
           </div>
         )}
         {!loading && !error && filteredPosts && (
+          <div className="bg-white p-6 rounded-lg">
           <DataTable
             searchKey="title"
             columns={columns}
@@ -145,7 +146,10 @@ const MyPosts = (props : props) => {
                  filteredPosts
             }
             tableClass="flex flex-col justify-center"
+            
           />
+            </div>
+
         )}
       </div>
       <Drawer

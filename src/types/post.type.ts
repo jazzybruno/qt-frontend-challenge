@@ -1,4 +1,5 @@
 import { IModel } from "./base.type"
+import { Like } from "./like.type"
 import { IUser } from "./user.type"
 
 export interface Post extends IModel {
@@ -8,4 +9,5 @@ export interface Post extends IModel {
     numberOfComments          : number
     numberOfLikes              : number   
     author         : IUser
+    likes : Like[]
 }

@@ -4,6 +4,7 @@ import { LogOutIcon } from "lucide-react";
 import { useState } from "react";
 import { humanizeDateFormat } from "@/utils/funcs";
 import CreatePost from "./create-post";
+import { UserCircleIcon } from "@heroicons/react/24/outline";
 
 type props = {
   handleChangeShow: (option: number) => void;
@@ -29,8 +30,8 @@ const Header = (props: props) => {
         }}
         className="flex gap-3 font-montserrat items-center text-2xl justify-center hover:cursor-pointer"
       >
-        <img src="/Logo.png" width={40} height={40} alt="Logo" />
-        <span className="hidden md:block">QT MEDIA</span>
+        <img src="/Logo.png" width={40} height={40} alt="Logo" /> 
+        <span className="hidden text-sm font-black text-blue-600 underline underline-offset-8 md:block">QT MEDIA</span>
       </div>
 
       <div className="flex md:hidden">
@@ -46,17 +47,17 @@ const Header = (props: props) => {
         <div className="flex flex-col items-center space-y-4">
           {user?.id != null ? (
             <>
-              <Button fullWidth onClick={() => setCreatePostModel(true)}>Create Post</Button>
-              <Button fullWidth onClick={() => props.handleChangeShow(2)}>My Posts</Button>
-              <Button fullWidth onClick={() => props.handleChangeShow(3)}>My Reports</Button>
+              <button className="border bg-transparent border-blue-500 py-3 rounded-lg px-2 text-blue-500" onClick={() => setCreatePostModel(true)}>Create Post</button>
+              <button onClick={() => props.handleChangeShow(2)}>My Posts</button>
+              <button onClick={() => props.handleChangeShow(3)}>My Reports</button>
               <Group onClick={() => setProfileModal(true)} className="cursor-pointer flex-col items-center space-y-2">
                 <Avatar
                   size={"md"}
                   src={`https://ui-avatars.com/api/?name=${user?.fullName}+${user?.email}&bold=true`}
                 />
-                <Text size="sm" color="dimmed">
+                {/* <Text size="sm" color="dimmed">
                   {user.fullName}
-                </Text>
+                </Text> */}
               </Group>
               <Button fullWidth variant="outline" color="red" onClick={logout}>
                 Logout
@@ -64,8 +65,8 @@ const Header = (props: props) => {
             </>
           ) : (
             <>
-              <a className="bg-pink-600 text-white py-2 px-6 font-bold rounded-md" href="/auth/login">Login</a>
-              <a className="bg-pink-600 text-white py-2 px-6 font-bold rounded-md" href="/auth/signup">Signup</a>
+              <a className="bg-blue-500 text-white py-2 px-6 font-bold rounded-md" href="/auth/login">Login</a>
+              <a className="bg-blue-500 text-white py-2 px-6 font-bold rounded-md" href="/auth/signup">Signup</a>
             </>
           )}
         </div>
@@ -74,37 +75,39 @@ const Header = (props: props) => {
       <div className="hidden md:flex flex-row justify-around items-center space-x-10">
         {user?.id != null ? (
           <>
-            <Button onClick={() => setCreatePostModel(true)}>Create Post</Button>
-            <Button onClick={() => props.handleChangeShow(2)}>My Posts</Button>
-            <Button onClick={() => props.handleChangeShow(3)}>My Reports</Button>
+            <button className="border bg-transparent text-blue-500 border-blue-500 rounded-lg py-2 px-4" onClick={() => setCreatePostModel(true)}>Create Post</button>
+            <button onClick={() => props.handleChangeShow(2)}>My Posts</button>
+            <button onClick={() => props.handleChangeShow(3)}>My Reports</button>
             <Group justify="space-between">
               <Group mt="md" mb="xs" align="center">
                 <Group
                   onClick={() => setProfileModal(true)}
                   className="cursor-pointer"
                 >
-                  <Avatar
-                    size={"md"}
-                    src={`https://ui-avatars.com/api/?name=${user?.fullName}+${user?.email}&bold=true`}
-                  />
-                  <Text size="sm" color="dimmed">
-                    {user.fullName}
-                  </Text>
+                  <UserCircleIcon width={32} height={32} className="stroke-slate-500" />
+                  <div>
+                    <Text size="sm" color="dimmed">
+                      {user.fullName}
+                    </Text>
+                    <p  className="text-xs text-slate-400">
+                      {user.email}
+                    </p>
+                  </div>
                 </Group>
                 <ActionIcon
                   variant="transparent"
                   onClick={logout}
-                  className="flex py-2.5 hover:text-primary rounded-md duration-300 items-center gap-3 px-6 hover:bg-accent"
+                  className="flex py-2.5 hover:text-primary rounded-md duration-300 items-center gap-3 px-4 hover:bg-accent"
                 >
-                  <LogOutIcon size={20} />
+                  <LogOutIcon color="red" size={16} width={20} />
                 </ActionIcon>
               </Group>
             </Group>
           </>
         ) : (
           <div className="flex flex-row space-x-10">
-            <a className="bg-pink-600 text-white py-2 px-6 font-bold rounded-md" href="/auth/login">Login</a>
-            <a className="bg-pink-600 text-white py-2 px-6 font-bold rounded-md" href="/auth/signup">Signup</a>
+            <a className="bg-blue-500 text-white py-2 px-6  rounded-md" href="/auth/login">Login</a>
+            <a className="bg-blue-500 text-white py-2 px-6  rounded-md" href="/auth/signup">Signup</a>
           </div>
         )}
       </div>

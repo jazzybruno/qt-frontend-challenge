@@ -64,7 +64,7 @@ const Sidebar = () => {
             }
           >
             <img src={"/Logo.png"} width={40} height={40} alt="Logo" />
-            QT MEDIA
+            {/* QT MEDIA */}
           </div>
           <div className="flex gap-y-0.5 flex-col w-full">
             {routes.map((route, index) => {
