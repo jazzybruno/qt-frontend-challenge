@@ -1,15 +1,23 @@
 .my-masonry-grid {
-    display: flex;
-    margin-left: -30px; /* gutter size offset */
-    width: auto;
-  }
-  .my-masonry-grid_column {
-    padding-left: 30px; /* gutter size */
-    background-clip: padding-box;
+  display: flex;
+  width: 100%;
+  gap: 16px; /* Adjust gap as needed */
+}
+
+.my-masonry-grid_column {
+  background-clip: padding-box;
+}
+
+.my-masonry-grid_column > div {
+  margin-bottom: 16px; /* Adjust margin as needed */
+}
+
+@media (max-width: 700px) {
+  .my-masonry-grid {
+    gap: 8px; /* Adjust gap for smaller screens */
   }
   
-  /* Style your items */
   .my-masonry-grid_column > div {
-    margin-bottom: 30px;
+    margin-bottom: 8px; /* Adjust margin for smaller screens */
   }
-  
+}

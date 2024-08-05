@@ -2,12 +2,14 @@ import DeleteForm from "@/components/core/DeleteForm";
 import MainModal from "@/components/core/MainModal";
 import TableSkeleton from "@/components/core/TableSkeleton";
 import AddUpdateUser from "@/components/dashboard/crud/AddUpdateUser";
+import UpdatePost from "@/components/dashboard/crud/UpdatePost";
 import ViewUser from "@/components/dashboard/crud/ViewUser";
 import { Column, DataTable } from "@/components/dashboard/data-table.tsx";
 import { useAuth } from "@/contexts/AuthProvider";
 import useDelete from "@/hooks/useDelete";
 import useGet from "@/hooks/useGet";
 import DashboardLayout from "@/layouts/DashboardLayout";
+import { Post } from "@/types/post.type";
 import { IUser } from "@/types/user.type";
 import { humanizeDateFormat } from "@/utils/funcs";
 import { ActionIcon, Button, Drawer } from "@mantine/core";
@@ -16,7 +18,11 @@ import React, { useState } from "react";
 import { AiOutlineEye, AiOutlineReload } from "react-icons/ai";
 import { BiEdit, BiTrash } from "react-icons/bi";
 
-const Comments = () => {
+type props = {
+  isAdmin : boolean
+}
+
+const MyPosts = (props : props) => {
   const [showDrawer, setShowDrawer] = React.useState(false);
   const [viewUser, setViewUser] = React.useState({
     open: false,
@@ -24,81 +30,69 @@ const Comments = () => {
   });
   const [isEdit, setIsEdit] = useState({
     status: false,
-    data: null as IUser | null,
+    data: null as Post | null,
   });
   const [isDelete, setIsDelete] = useState({
     status: false,
-    data: null as IUser | null,
+    data: null as Post | null,
   });
-  const { deleteData, loading: deleteLoading } = useDelete(`/users/delete-user`);
+  const { deleteData, loading: deleteLoading } = useDelete(`/post/delete`);
   const { user } = useAuth();
 
   const {
-    data: users,
+    data: posts,
     loading,
     error,
     get,
-  } = useGet<IUser[]>(
-    "/users/get-users",
+  } = useGet<Post[]>(
+      `${props.isAdmin ? "/post/all" : "/post/user"}`,
     {
       defaultData: [],
     }
   );
   // remove current user from users
-  const filteredUsers = users?.filter((u) => u.id !== user?.id );
+  const filteredPosts = posts
 
-  const onEdit = (data: IUser) => {
+  const onEdit = (data: Post) => {
     setIsEdit({
       status: true,
       data,
     });
   };
 
-  const onDelete = (data: IUser) => {
+  const onDelete = (data: Post) => {
     setIsDelete({
       status: true,
       data,
     });
   };
 
-  const columns: Column<IUser>[] = [
+  const columns: Column<Post>[] = [
     {
-      name: "First Name",
-      accessorKey: "firstName",
+      name: "Title",
+      accessorKey: "title",
     },
     {
-      name: "Last Name",
-      accessorKey: "lastName",
+      name: "Author",
+      accessorKey: "author.fullName",
     },
     {
-      name: "Telephone",
-      accessorKey: "telephone",
+      name: "Likes",
+      accessorKey: "numberOfLikes",
     },
     {
-      name: "Username",
-      accessorKey: "username",
+      name: "Comments",
+      accessorKey: "numberOfComments",
     },
     {
-      name: "Email",
-      accessorKey: "email",
+      name: "Created At",
+      accessorKey: "createdAt",
     },
     {
       name: "Actions",
       accessorKey: "class",
       renderCell: (row) => (
         <div className="flex items-center gap-x-3">
-          <ActionIcon
-            variant="transparent"
-            color="black"
-            onClick={() =>
-              setViewUser({
-                open: true,
-                data: row,
-              })
-            }
-          >
-            <AiOutlineEye />
-          </ActionIcon>
           <ActionIcon
             onClick={() => onEdit(row)}
             variant="transparent"
@@ -121,8 +115,7 @@ const Comments = () => {
   ];
 
   return (
-    <DashboardLayout
-    >
+    <>
       <div className="flex w-full flex-col p-3">
         {loading && <TableSkeleton columns={columns} />}
         {error && (
@@ -144,12 +137,12 @@ const Comments = () => {
             </Button>
           </div>
         )}
-        {!loading && !error && filteredUsers && (
+        {!loading && !error && filteredPosts && (
           <DataTable
-            searchKey="email"
+            searchKey="title"
             columns={columns}
             data={
-                 filteredUsers
+                 filteredPosts
             }
             tableClass="flex flex-col justify-center"
           />
@@ -166,12 +159,12 @@ const Comments = () => {
         position="right"
         title={
           <span className=" font-semibold">
-            {isEdit ? "Edit User" : "Add User"}
+            {isEdit ? "Edit Post" : "Add User"}
           </span>
         }
       >
-        <AddUpdateUser
-          user={isEdit.data}
+        <UpdatePost
+          post={isEdit.data}
           isEdit={isEdit.status}
           refetch={get}
           onClose={() => setShowDrawer(false)}
@@ -195,7 +188,7 @@ const Comments = () => {
       <MainModal
         size={"lg"}
         isOpen={isDelete.status}
-        title="Delete User"
+        title="Delete Post"
         onClose={() => setIsDelete({ status: false, data: null })}
       >
         <DeleteForm
@@ -205,12 +198,12 @@ const Comments = () => {
             setIsDelete({ status: false, data: null });
             get();
           }}
-          title={isDelete.data?.fullName}
+          title={isDelete.data?.title}
           loading={deleteLoading}
         />
       </MainModal>
-    </DashboardLayout>
+    </>
   );
 };
 
-export default Comments;
+export default MyPosts;

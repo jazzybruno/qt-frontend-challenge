@@ -8,7 +8,6 @@ import {
 import { useAuth } from "./contexts/AuthProvider";
 import AccountIndex from "./pages/account";
 import Users from "./pages/admin/users";
-import Comments from "./pages/admin/comments";
 import Login from "./pages/auth/login";
 import SignUp from "./pages/auth/register";
 import Posts from "./pages/admin/posts";
@@ -57,7 +56,6 @@ function App() {
            <Route path="/account" element={<AccountIndex />} />
            <Route path="/users" element={<Users />} />
            <Route path="/posts" element={<Posts />} />
-           <Route path="/comments" element={<Comments />} />
            <Route path="/report" element={<AbusiveReport />} />
           </Route>
         </Route>

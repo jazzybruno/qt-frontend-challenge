@@ -12,7 +12,7 @@ const DeleteForm: React.FC<DeleteFormProps> = ({ onCancel, onDelete, title, load
   return (
     <div className="flex py-6 flex-col items-center justify-center gap-y-4">
       <span className="text-lg font-semibold">
-        Are you sure you want to delete {title ?? 'this item'}?
+        Are you sure you want to delete ?
       </span>
       <div className="flex gap-x-2">
         <Button

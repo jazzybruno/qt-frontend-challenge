@@ -22,11 +22,6 @@ export const UserRoutes: Route[] = [
     isPublic: true
   },
   {
-    icon: <MenuSquareIcon className="w-5" />,
-    name: "Comments",
-    path: "/comments",
-  },
-  {
     icon: <FaRegFilePowerpoint className="w-5" />,
     name: "Abuse Reports",
     path: "/report",
